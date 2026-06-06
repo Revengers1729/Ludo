@@ -1,0 +1,296 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    user-select: none;
+}
+
+body {
+    background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    transition: opacity 0.3s ease;
+}
+
+.hidden {
+    display: none !important;
+    opacity: 0;
+}
+
+/* Setup Screen Menu */
+.menu-box {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 40px;
+    width: 360px;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+}
+
+.game-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #f1c40f;
+    text-shadow: 2px 4px 0px #c0392b, 0 0 20px rgba(241,196,15,0.6);
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: #bdc3c7;
+}
+
+.input-group select {
+    width: 100%;
+    padding: 12px;
+    background: #2c3e50;
+    color: white;
+    border: 1px solid #34495e;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #1e7e44;
+    transition: all 0.1s ease;
+    margin-top: 10px;
+}
+
+.btn-primary:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 #1e7e44;
+}
+
+/* Game Interface */
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.status-bar {
+    width: 100%;
+    max-width: 550px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,0.4);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.red-text { color: #ff4757; }
+.green-text { color: #2ed573; }
+.blue-text { color: #1e90ff; }
+.yellow-text { color: #ffa502; }
+
+.btn-secondary {
+    padding: 6px 12px;
+    background: #7f8c8d;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* 15x15 Grid Ludo Board */
+.ludo-board {
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    grid-template-rows: repeat(15, 1fr);
+    width: min(90vw, 520px);
+    height: min(90vw, 520px);
+    background: #f0f0f0;
+    border: 6px solid #2c3e50;
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+    position: relative;
+}
+
+/* Home Bases */
+.home-zone {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12%;
+}
+
+.inner-box {
+    background: white;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 10px;
+    padding: 10px;
+}
+
+.token-slot {
+    border-radius: 50%;
+    border: 2px dashed #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.red-home { background-color: #ff4757; }
+.green-home { background-color: #2ed573; }
+.blue-home { background-color: #1e90ff; }
+.yellow-home { background-color: #ffa502; }
+
+/* Dynamic Track Cells */
+.cell {
+    background-color: #ffffff;
+    border: 1px solid #dcdde1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-size: 10px;
+}
+
+/* Cell Paths and Safe Zones */
+.cell.red-path { background-color: #ff4757; border-color: #ff6b81;}
+.cell.green-path { background-color: #2ed573; border-color: #5edfff;}
+.cell.blue-path { background-color: #1e90ff; border-color: #70a1ff;}
+.cell.yellow-path { background-color: #ffa502; border-color: #eccc68;}
+
+.cell.safe-star {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23718093"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.4 8.168L12 18.896l-7.334 3.857 1.4-8.168L.133 9.41l8.2-1.192z"/></svg>');
+    background-size: 70%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.center-goal {
+    border: 1px solid #333;
+}
+
+/* Tokens Design */
+.token {
+    width: 75%;
+    height: 75%;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    cursor: pointer;
+    position: absolute;
+    z-index: 10;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.token.movable {
+    animation: bounce 0.6s infinite alternate;
+    box-shadow: 0 0 12px #fff;
+    border-color: #f1c40f;
+}
+
+@keyframes bounce {
+    from { transform: translateY(0) scale(1); }
+    to { transform: translateY(-4px) scale(1.05); }
+}
+
+.token.red-token { background: radial-gradient(circle, #ff6b81, #ff4757); }
+.token.green-token { background: radial-gradient(circle, #5edfff, #2ed573); }
+.token.blue-token { background: radial-gradient(circle, #70a1ff, #1e90ff); }
+.token.yellow-token { background: radial-gradient(circle, #eccc68, #ffa502); }
+
+/* Stacked tokens indicator */
+.token-count {
+    position: absolute;
+    background: black;
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: -2px;
+    right: -2px;
+    font-weight: bold;
+    border: 1px solid white;
+}
+
+/* Dice Panel */
+.controls-panel {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.dice-box {
+    width: 70px;
+    height: 70px;
+    background: white;
+    color: #2c3e50;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3.5rem;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #bdc3c7, 0 10px 20px rgba(0,0,0,0.3);
+    transition: all 0.1s ease;
+}
+
+.dice-box:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #bdc3c7;
+}
+
+.rolling {
+    animation: spin 0.15s infinite linear;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg) scale(0.9); }
+    100% { transform: rotate(360deg) scale(0.9); }
+}
+
+#roll-status-text {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #a4b0be;
+}
