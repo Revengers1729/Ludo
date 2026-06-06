@@ -11,7 +11,7 @@ const firebaseConfig = {
 
 // Initialize Firebase if configs are filled
 let db = null;
-if(firebaseConfig.apiKey !== "AIzaSyB5U5YaSWsB0nwPBfZoFFbM7EM4_WiZ45A") {
+if(firebaseConfig.apiKey !== "YOUR_API_KEY") {
     firebase.initializeApp(firebaseConfig);
     db = firebase.database();
 }
