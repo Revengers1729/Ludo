@@ -31,7 +31,6 @@ body {
     opacity: 0;
 }
 
-/* Setup Screen Menu */
 .menu-box {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
@@ -95,7 +94,6 @@ body {
     box-shadow: 0 1px 0 #1e7e44;
 }
 
-/* Game Interface */
 .game-container {
     display: flex;
     flex-direction: column;
@@ -131,7 +129,6 @@ body {
     font-size: 0.9rem;
 }
 
-/* 15x15 Grid Ludo Board */
 .ludo-board {
     display: grid;
     grid-template-columns: repeat(15, 1fr);
@@ -145,7 +142,6 @@ body {
     position: relative;
 }
 
-/* Home Bases */
 .home-zone {
     display: flex;
     justify-content: center;
@@ -179,7 +175,6 @@ body {
 .blue-home { background-color: #1e90ff; }
 .yellow-home { background-color: #ffa502; }
 
-/* Dynamic Track Cells */
 .cell {
     background-color: #ffffff;
     border: 1px solid #dcdde1;
@@ -190,7 +185,6 @@ body {
     font-size: 10px;
 }
 
-/* Cell Paths and Safe Zones */
 .cell.red-path { background-color: #ff4757; border-color: #ff6b81;}
 .cell.green-path { background-color: #2ed573; border-color: #5edfff;}
 .cell.blue-path { background-color: #1e90ff; border-color: #70a1ff;}
@@ -207,7 +201,6 @@ body {
     border: 1px solid #333;
 }
 
-/* Tokens Design */
 .token {
     width: 75%;
     height: 75%;
@@ -236,25 +229,6 @@ body {
 .token.blue-token { background: radial-gradient(circle, #70a1ff, #1e90ff); }
 .token.yellow-token { background: radial-gradient(circle, #eccc68, #ffa502); }
 
-/* Stacked tokens indicator */
-.token-count {
-    position: absolute;
-    background: black;
-    color: white;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    font-size: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    bottom: -2px;
-    right: -2px;
-    font-weight: bold;
-    border: 1px solid white;
-}
-
-/* Dice Panel */
 .controls-panel {
     margin-top: 10px;
     text-align: center;
