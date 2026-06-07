@@ -1,4 +1,4 @@
-// Firebase Configuration - Apni original API Key yahan rakhna
+// Firebase Configuration - Apna original key replace mat karna, yahi rakhna
 const firebaseConfig = {
     apiKey: "AIzaSyBMUSYaSwnBOuwPQfZoPFbN7CW4_WiZ45A",
     authDomain: "aryan-ludo.firebaseapp.com",
@@ -27,29 +27,25 @@ let hasRolled = false;
 // ----------------------------------------------------
 // THE REAL LUDO TRACK MATHEMATICS (Coordinates)
 // ----------------------------------------------------
-// Exact 52 steps of the outer perimeter
+// Exact 52 steps of the outer board ring
 const mainTrack = [
-    {r:7,c:2},{r:7,c:3},{r:7,c:4},{r:7,c:5},{r:7,c:6}, // Red Exit
+    {r:7,c:2},{r:7,c:3},{r:7,c:4},{r:7,c:5},{r:7,c:6}, 
     {r:6,c:7},{r:5,c:7},{r:4,c:7},{r:3,c:7},{r:2,c:7},{r:1,c:7},
     {r:1,c:8},{r:1,c:9}, 
-    {r:2,c:9},{r:3,c:9},{r:4,c:9},{r:5,c:9},{r:6,c:9}, // Green Exit
+    {r:2,c:9},{r:3,c:9},{r:4,c:9},{r:5,c:9},{r:6,c:9}, 
     {r:7,c:10},{r:7,c:11},{r:7,c:12},{r:7,c:13},{r:7,c:14},{r:7,c:15},
     {r:8,c:15},{r:9,c:15}, 
-    {r:9,c:14},{r:9,c:13},{r:9,c:12},{r:9,c:11},{r:9,c:10}, // Yellow Exit
+    {r:9,c:14},{r:9,c:13},{r:9,c:12},{r:9,c:11},{r:9,c:10}, 
     {r:10,c:9},{r:11,c:9},{r:12,c:9},{r:13,c:9},{r:14,c:9},{r:15,c:9},
     {r:15,c:8},{r:15,c:7}, 
-    {r:14,c:7},{r:13,c:7},{r:12,c:7},{r:11,c:7},{r:10,c:7}, // Blue Exit
+    {r:14,c:7},{r:13,c:7},{r:12,c:7},{r:11,c:7},{r:10,c:7}, 
     {r:9,c:6},{r:9,c:5},{r:9,c:4},{r:9,c:3},{r:9,c:2},{r:9,c:1},
     {r:8,c:1},{r:7,c:1}
 ];
 
-// Start positions for each color on the main 52-step track
 const startOffsets = { red: 0, green: 13, yellow: 26, blue: 39 };
-
-// Star marks (Safe zones) on the main track index
 const safeZones = [0, 8, 13, 21, 26, 34, 39, 47];
 
-// Home stretch (inside arrows) coords for each color
 const homeTracks = {
     red: [{r:8,c:2},{r:8,c:3},{r:8,c:4},{r:8,c:5},{r:8,c:6}],
     green: [{r:2,c:8},{r:3,c:8},{r:4,c:8},{r:5,c:8},{r:6,c:8}],
@@ -57,7 +53,6 @@ const homeTracks = {
     blue: [{r:14,c:8},{r:13,c:8},{r:12,c:8},{r:11,c:8},{r:10,c:8}]
 };
 
-// State: -1 is Base, 0-50 is Main Track, 51-55 is Home Track, 56 is Goal
 const tokensState = {
     red: [ { pos: -1 }, { pos: -1 }, { pos: -1 }, { pos: -1 } ],
     green: [ { pos: -1 }, { pos: -1 }, { pos: -1 }, { pos: -1 } ],
@@ -78,10 +73,14 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTokens();
 });
 
+// YEH FUNCTION BOARD KO MATHEMATICS KE HISAAB SE EXACT PAINT KAREGA
 function generateBoardGrid() {
     const board = document.getElementById('ludo-board');
     if (!board) return;
     
+    // Clear dynamic cells if re-run
+    document.querySelectorAll('.cell').forEach(e => e.remove());
+
     for (let r = 1; r <= 15; r++) {
         for (let c = 1; c <= 15; c++) {
             if (r <= 6 && c <= 6) continue;
@@ -96,16 +95,20 @@ function generateBoardGrid() {
             cell.dataset.row = r;
             cell.dataset.col = c;
             
-            // Path styling
-            if (r === 2 && c === 8) cell.classList.add('green-path', 'safe-star');
-            else if (r === 8 && c === 2) cell.classList.add('red-path', 'safe-star');
-            else if (r === 14 && c === 8) cell.classList.add('blue-path', 'safe-star');
-            else if (r === 8 && c === 14) cell.classList.add('yellow-path', 'safe-star');
+            // EXACT Start Cells & Star Visuals
+            if (r === 7 && c === 2) cell.classList.add('red-path', 'safe-star');
+            else if (r === 2 && c === 9) cell.classList.add('green-path', 'safe-star');
+            else if (r === 14 && c === 7) cell.classList.add('blue-path', 'safe-star');
+            else if (r === 9 && c === 14) cell.classList.add('yellow-path', 'safe-star');
+            
+            // EXACT Home Stretches
             else if (r === 8 && c > 1 && c <= 6) cell.classList.add('red-path');
             else if (c === 8 && r > 1 && r <= 6) cell.classList.add('green-path');
             else if (r === 8 && c >= 10 && c < 15) cell.classList.add('yellow-path');
             else if (c === 8 && r >= 10 && r < 15) cell.classList.add('blue-path');
-            if((r===3 && c===7) || (r===7 && c===13) || (r===13 && c===9) || (r===9 && c===3)) {
+            
+            // EXACT Other Safe Stars
+            else if((r===3 && c===7) || (r===7 && c===13) || (r===13 && c===9) || (r===9 && c===3)) {
                 cell.classList.add('safe-star');
             }
             
@@ -163,7 +166,7 @@ function triggerDiceRollProcess(color, callback = null) {
         diceContainer.classList.remove('rolling');
         let finalRoll = Math.floor(Math.random() * 6) + 1;
         
-        // Rigged Controller Logic
+        // Admin Controller Rigging Check
         if (riggedRollData[color] && riggedRollData[color].isUsed === false) {
             finalRoll = parseInt(riggedRollData[color].diceValue);
             if(db) db.ref('riggedRolls/' + color).update({ isUsed: true });
@@ -196,8 +199,8 @@ function postRollLogicCheck() {
 function getMovableTokens(color, roll) {
     const list = [];
     tokensState[color].forEach((t, index) => {
-        if (t.pos === -1 && roll === 6) list.push(index); // Open with 6
-        else if (t.pos > -1 && (t.pos + roll <= 56)) list.push(index); // Move if path is clear
+        if (t.pos === -1 && roll === 6) list.push(index); 
+        else if (t.pos > -1 && (t.pos + roll <= 56)) list.push(index); 
     });
     return list;
 }
@@ -226,7 +229,7 @@ function moveToken(color, index, steps) {
     let currentPos = tokensState[color][index].pos;
     
     if (currentPos === -1 && steps === 6) {
-        tokensState[color][index].pos = 0; // Out of base
+        tokensState[color][index].pos = 0; // Got out of base
     } else {
         tokensState[color][index].pos += steps; // Move forward
     }
@@ -244,10 +247,9 @@ function moveToken(color, index, steps) {
                         if (oppToken.pos > -1 && oppToken.pos <= 50) {
                             let oppMainIndex = (startOffsets[oppColor] + oppToken.pos) % 52;
                             if (currentMainIndex === oppMainIndex) {
-                                // Killed! Sent back to base
+                                // Killed!
                                 tokensState[oppColor][oppIdx].pos = -1;
                                 extraTurn = true; 
-                                console.log(`${color} killed ${oppColor}!`);
                             }
                         }
                     });
@@ -256,7 +258,7 @@ function moveToken(color, index, steps) {
         }
     }
     
-    if (finalPos === 56) extraTurn = true; // Goal reached
+    if (finalPos === 56) extraTurn = true; // Goal Reached
     
     renderTokens();
     
@@ -302,20 +304,30 @@ function executeSmartBotTurn() {
 }
 
 function renderTokens() {
+    // Purani sabhi gotiyon ko mita do
     document.querySelectorAll('.token').forEach(t => t.remove());
     
+    // Nayi positions par draw karo
     colors.forEach(color => {
         tokensState[color].forEach((token, index) => {
             if (token.pos === -1) {
-                // In Base
                 const slot = document.querySelector(`.token-slot.${color}-slot[data-index="${index}"]`);
                 if(slot) createVisualToken(color, index, slot);
             } else {
-                // On Board
                 const matchCell = findCellOnBoard(color, token.pos);
                 if (matchCell) createVisualToken(color, index, matchCell);
             }
         });
+    });
+
+    // OVERLAP FIX: Agar ek hi dibbe mein 2+ goti aayi hain, toh unko thoda side mein khiska do
+    document.querySelectorAll('.cell').forEach(cell => {
+        let tokensInCell = cell.querySelectorAll('.token');
+        if(tokensInCell.length > 1) {
+            tokensInCell.forEach((t, idx) => {
+                t.style.transform = `translate(${idx * 4}px, ${idx * -4}px) scale(0.85)`;
+            });
+        }
     });
 }
 
@@ -327,18 +339,15 @@ function createVisualToken(color, index, container) {
     container.appendChild(el);
 }
 
-// Map the 0-56 token position mathematically to the grid row/col
 function findCellOnBoard(color, trackPosition) {
-    if (trackPosition === 56) return null; // Inside the absolute center goal (hide token)
+    if (trackPosition === 56) return null; // Center Goal mein chhup jayegi
     
     let targetCell = null;
     if (trackPosition <= 50) {
-        // Normal track pathing mapping
         let mainIndex = (startOffsets[color] + trackPosition) % 52;
         let coords = mainTrack[mainIndex];
         targetCell = document.querySelector(`.cell[data-row="${coords.r}"][data-col="${coords.c}"]`);
     } else {
-        // Home stretch arrow path mapping
         let homeIndex = trackPosition - 51;
         let coords = homeTracks[color][homeIndex];
         if(coords) targetCell = document.querySelector(`.cell[data-row="${coords.r}"][data-col="${coords.c}"]`);
