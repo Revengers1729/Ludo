@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ludo King Clone - Premium Edition</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Firebase SDK (Compat Version for CDN usage) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
@@ -34,15 +33,12 @@
 
     <div id="game-screen" class="screen hidden">
         <div class="game-container">
-            <!-- Top Controls/Status -->
             <div class="status-bar">
                 <div id="current-turn-display">Turn: <span id="active-player-name" class="red-text">Red</span></div>
                 <button id="restart-btn" class="btn-secondary">Main Menu</button>
             </div>
 
-            <!-- The 15x15 Ludo Board -->
             <div class="ludo-board" id="ludo-board">
-                <!-- Red Home (Top Left) -->
                 <div class="home-zone red-home" style="grid-area: 1 / 1 / 7 / 7;">
                     <div class="inner-box">
                         <div class="token-slot red-slot" data-color="red" data-index="0"></div>
@@ -52,7 +48,6 @@
                     </div>
                 </div>
 
-                <!-- Green Home (Top Right) -->
                 <div class="home-zone green-home" style="grid-area: 1 / 10 / 7 / 16;">
                     <div class="inner-box">
                         <div class="token-slot green-slot" data-color="green" data-index="0"></div>
@@ -62,7 +57,6 @@
                     </div>
                 </div>
 
-                <!-- Blue Home (Bottom Left) -->
                 <div class="home-zone blue-home" style="grid-area: 10 / 1 / 16 / 7;">
                     <div class="inner-box">
                         <div class="token-slot blue-slot" data-color="blue" data-index="0"></div>
@@ -72,7 +66,6 @@
                     </div>
                 </div>
 
-                <!-- Yellow Home (Bottom Right) -->
                 <div class="home-zone yellow-home" style="grid-area: 10 / 10 / 16 / 16;">
                     <div class="inner-box">
                         <div class="token-slot yellow-slot" data-color="yellow" data-index="0"></div>
@@ -82,7 +75,6 @@
                     </div>
                 </div>
 
-                <!-- Center Triangle Goal -->
                 <div class="center-goal" style="grid-area: 7 / 7 / 10 / 10;">
                     <svg viewBox="0 0 100 100" style="width:100%; height:100%;">
                         <polygon points="0,0 50,50 0,100" fill="#2980b9" />
@@ -93,7 +85,6 @@
                 </div>
             </div>
 
-            <!-- Dice Roll Area -->
             <div class="controls-panel">
                 <div class="dice-wrapper">
                     <div id="dice-container" class="dice-box">
@@ -104,12 +95,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Audio Effects -->
-    <audio id="sound-roll" src="https://actions.google.com/sounds/v1/cartoon/slide_whistle_to_drum_roll.ogg" preload="auto"></audio>
-    <audio id="sound-move" src="https://actions.google.com/sounds/v1/digital/beep.ogg" preload="auto"></audio>
-    <audio id="sound-cut" src="https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg" preload="auto"></audio>
-    <audio id="sound-win" src="https://actions.google.com/sounds/v1/events/tada.ogg" preload="auto"></audio>
 
     <script src="game.js"></script>
 </body>
