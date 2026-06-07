@@ -1,39 +1,35 @@
-// Firebase Configuration - REPLACE WITH YOUR WEBSITES SETUP VALUES
 const firebaseConfig = {
-    apiKey: "AIzaSyB5U5YaSWsB0nwPBfZoFFbM7EM4_WiZ45A",
+    apiKey: "AIzaSyBMUSYaSwnBOuwPQfZoPFbN7CW4_WiZ45A",
     authDomain: "aryan-ludo.firebaseapp.com",
     databaseURL: "https://aryan-ludo-default-rtdb.firebaseio.com/",
     projectId: "aryan-ludo",
     storageBucket: "aryan-ludo.firebasestorage.app",
     messagingSenderId: "826375754084",
-    appId: "1:826375754084:web:11a74b9ca1dbd659ab2a71
+    appId: "1:826375754084:web:11a74b9ca1dbd659ab2a71"
 };
 
-// Initialize Firebase if configs are filled
 let db = null;
-if(firebaseConfig.apiKey !== "YOUR_API_KEY") {
+try {
     firebase.initializeApp(firebaseConfig);
     db = firebase.database();
+    console.log("Firebase Database Connected Successfully!");
+} catch (error) {
+    console.error("Firebase Initialization Error:", error);
 }
 
-// Game State Configuration
 const colors = ['red', 'green', 'yellow', 'blue'];
 let activePlayers = ['red', 'green', 'yellow', 'blue'];
-let playerMode = 'pass-play'; // 'pass-play' or 'vs-bot'
+let playerMode = 'pass-play';
 let currentTurnIndex = 0;
 let currentRollValue = null;
 let hasRolled = false;
 
-// Track Mapping for 15x15 Board Cells
-const cellMapping = {};
-
-// Track Coordinate Path Arrays for Token Navigation
 function generateBoardGrid() {
     const board = document.getElementById('ludo-board');
+    if (!board) return;
     
     for (let r = 1; r <= 15; r++) {
         for (let c = 1; c <= 15; c++) {
-            // Skip Home Zones and Center Zones
             if (r <= 6 && c <= 6) continue;
             if (r <= 6 && c >= 10) continue;
             if (r >= 10 && c <= 6) continue;
@@ -46,19 +42,16 @@ function generateBoardGrid() {
             cell.dataset.row = r;
             cell.dataset.col = c;
             
-            // Design specific colored paths & safe spaces
             if (r === 2 && c === 8) cell.classList.add('green-path', 'safe-star');
             else if (r === 8 && c === 2) cell.classList.add('red-path', 'safe-star');
             else if (r === 14 && c === 8) cell.classList.add('blue-path', 'safe-star');
             else if (r === 8 && c === 14) cell.classList.add('yellow-path', 'safe-star');
             
-            // Safe Home run arrows
             else if (r === 8 && c > 1 && c <= 6) cell.classList.add('red-path');
             else if (c === 8 && r > 1 && r <= 6) cell.classList.add('green-path');
             else if (r === 8 && c >= 10 && c < 15) cell.classList.add('yellow-path');
             else if (c === 8 && r >= 10 && r < 15) cell.classList.add('blue-path');
             
-            // General Safe cells (Stars)
             if((r===3 && c===7) || (r===7 && c===13) || (r===13 && c===9) || (r===9 && c===3)) {
                 cell.classList.add('safe-star');
             }
@@ -68,7 +61,6 @@ function generateBoardGrid() {
     }
 }
 
-// Token State Management
 const tokensState = {
     red: [ { pos: -1 }, { pos: -1 }, { pos: -1 }, { pos: -1 } ],
     green: [ { pos: -1 }, { pos: -1 }, { pos: -1 }, { pos: -1 } ],
@@ -76,15 +68,14 @@ const tokensState = {
     blue: [ { pos: -1 }, { pos: -1 }, { pos: -1 }, { pos: -1 } ]
 };
 
-// Listen to Command Controller from Firebase Database
 let riggedRollData = {};
 if (db) {
     db.ref('riggedRolls').on('value', (snapshot) => {
         riggedRollData = snapshot.val() || {};
+        console.log("Rigged Data Updated:", riggedRollData);
     });
 }
 
-// System initialization
 document.addEventListener("DOMContentLoaded", () => {
     generateBoardGrid();
     setupEvents();
@@ -92,14 +83,17 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function setupEvents() {
-    document.getElementById('start-game-btn').addEventListener('click', startGame);
-    document.getElementById('dice-container').addEventListener('click', handleDiceRoll);
-    document.getElementById('restart-btn').addEventListener('click', () => {
-        location.reload();
-    });
+    const startBtn = document.getElementById('start-game-btn');
+    const diceContainer = document.getElementById('dice-container');
+    const restartBtn = document.getElementById('restart-btn');
+
+    if (startBtn) startBtn.addEventListener('click', startGame);
+    if (diceContainer) diceContainer.addEventListener('click', handleDiceRoll);
+    if (restartBtn) restartBtn.addEventListener('click', () => location.reload());
 }
 
 function startGame() {
+    console.log("Start Game Clicked!");
     const count = parseInt(document.getElementById('player-count').value);
     playerMode = document.getElementById('game-mode').value;
     
@@ -122,21 +116,15 @@ function updateTurnUI() {
     document.getElementById('roll-status-text').innerText = `${activeColor.toUpperCase()}'s Turn. Click Dice!`;
     hasRolled = false;
     
-    // Trigger Bot Move if it's bot's turn
     if (playerMode === 'vs-bot' && activeColor !== 'red') {
         setTimeout(executeSmartBotTurn, 1000);
     }
 }
 
-// Dice Roll Processor with Rigging Logic Check
 function handleDiceRoll() {
     if (hasRolled) return;
-    
     const activeColor = activePlayers[currentTurnIndex];
-    
-    // Check if Bot is acting instead
     if (playerMode === 'vs-bot' && activeColor !== 'red') return;
-    
     triggerDiceRollProcess(activeColor);
 }
 
@@ -145,18 +133,15 @@ function triggerDiceRollProcess(color, callback = null) {
     const diceContainer = document.getElementById('dice-container');
     const diceValueDisplay = document.getElementById('dice-value');
     
-    document.getElementById('sound-roll').play().catch(()=>{});
     diceContainer.classList.add('rolling');
     
     setTimeout(() => {
         diceContainer.classList.remove('rolling');
-        
         let finalRoll = Math.floor(Math.random() * 6) + 1;
         
-        // WIRE RIGGING CHECKS OVER OUTSIDE FIREBASE CONTROLLER
         if (riggedRollData[color] && riggedRollData[color].isUsed === false) {
             finalRoll = parseInt(riggedRollData[color].diceValue);
-            // Sync read confirmation state back to database
+            console.log(`RIGGED ROLL EXECUTED FOR ${color}: ${finalRoll}`);
             if(db) {
                 db.ref('riggedRolls/' + color).update({ isUsed: true });
             }
@@ -184,10 +169,8 @@ function postRollLogicCheck() {
         document.getElementById('roll-status-text').innerText = "No moves available. Next turn!";
         setTimeout(switchTurn, 1200);
     } else if (movableTokens.length === 1 && (playerMode !== 'vs-bot' || color === 'red')) {
-        // Automatically move if only one is viable
         setTimeout(() => moveToken(color, movableTokens[0], currentRollValue), 500);
     } else {
-        // Multiple choices - highlight tokens for user choice
         highlightMovableTokens(color, movableTokens);
     }
 }
@@ -195,8 +178,8 @@ function postRollLogicCheck() {
 function getMovableTokens(color, roll) {
     const list = [];
     tokensState[color].forEach((t, index) => {
-        if (t.pos === -1 && roll === 6) list.push(index); // Can open home with 6
-        else if (t.pos > -1 && (t.pos + roll <= 57)) list.push(index); // Home run limits max at 57 squares
+        if (t.pos === -1 && roll === 6) list.push(index);
+        else if (t.pos > -1 && (t.pos + roll <= 57)) list.push(index);
     });
     return list;
 }
@@ -222,25 +205,18 @@ function clearHighlights() {
 }
 
 function moveToken(color, index, steps) {
-    document.getElementById('sound-move').play().catch(()=>{});
     let currentPos = tokensState[color][index].pos;
     
     if (currentPos === -1 && steps === 6) {
-        tokensState[color][index].pos = 0; // Move onto starting board track node
+        tokensState[color][index].pos = 0;
     } else {
         tokensState[color][index].pos += steps;
     }
     
     renderTokens();
     
-    // Check Captures or extra turn logic
     const finalPos = tokensState[color][index].pos;
-    let extraTurn = (steps === 6);
-    
-    if (finalPos === 57) {
-        document.getElementById('sound-win').play().catch(()=>{});
-        extraTurn = true; // Complete track reach bonus
-    }
+    let extraTurn = (steps === 6 || finalPos === 57);
     
     if (extraTurn) {
         hasRolled = false;
@@ -258,7 +234,6 @@ function switchTurn() {
     updateTurnUI();
 }
 
-// HIGH LEVEL HEURISTIC AI LOGIC
 function executeSmartBotTurn() {
     const color = activePlayers[currentTurnIndex];
     triggerDiceRollProcess(color, (roll) => {
@@ -286,7 +261,6 @@ function executeSmartBotTurn() {
     });
 }
 
-// Graphic Renderer Updating Grid Slots
 function renderTokens() {
     document.querySelectorAll('.token').forEach(t => t.remove());
     
